@@ -294,7 +294,7 @@ Remove the renv directory and associated files. This deletes the environment and
 
 ### How to create and use a virtual environment in Julia
 
-Julia's built-in package manager, Pkg, provides functionality similar to virtual environments in other languages. The primary method is using project environments, which are defined by Project.toml and Manifest.toml files. These environments allow you to have project-specific package versions and dependencies. To create and manage these environments, you use Julia's REPL in package mode (accessed by pressing ']')
+Julia's built-in package manager, Pkg, provides functionality similar to virtual environments in other languages. The primary method is using project environments, which are defined by Project.toml and Manifest.toml files. These environments allow you to have project-specific package versions and dependencies. To create and manage these environments, you use Julia's REPL in package mode (accessed by pressing `]`)
 
 #### Setup environment
 Create a new project directory and activate it as a Julia environment. 

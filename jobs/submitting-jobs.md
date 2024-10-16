@@ -73,7 +73,7 @@ Now let's walk through `my_script.sbatch` line by line to see what each directiv
 
 Lines 2-7 are your `SBTACH` directives. These lines are where you specify different options for your job including its name, output and error files path/name, list of nodes you want to use, resource limits, and more if required. Let's walk through them line by line:
 
-- `#SBATCH --job-name=test_job`: This directive gives your job a name that you can later use to easier track and manage your job when looking for it in the queue. In this example, we've called it `test_job`. You can read about job management at `/software/env-modules.html`.
+- `#SBATCH --job-name=test_job`: This directive gives your job a name that you can later use to easier track and manage your job when looking for it in the queue. In this example, we've called it `test_job`. You can read about job management at [Monitoring jobs]({{ site.baseurl }}{% link jobs/monitoring-jobs.md %}).
 - `#SBATCH --output=test_job.out`: Used to specify where your output file is generated, and what it's going to be named. In this example, we have not provided a path, but only provided a name. When you use the `--output` directive without specifying a full path, just providing a filename, Slurm will store the output file in the current working directory from which the `sbatch` command was executed.
 - `#SBATCH --error=test_job.err`: Functions similar to `--output` except it contains error messages generated during the execution of your job, if any. **The `.err` file is always going to be generated even if your job execution is successful; however, it's going to be empty if there are no errors.**
 - `#SBATCH --nodes=1`: Specifies your job to run on one available node. This directive basically tells the scheduler "Run my job on any available node you find, and I don't care which one". **It's also possible to specify the name of the node(s) you'd like to use which we will cover in future examples.**
@@ -82,7 +82,7 @@ Lines 2-7 are your `SBTACH` directives. These lines are where you specify differ
 
 After the last `#SBATCH` directive, commands are ran like any other regular shell script.
 
-- `module load python3`: Loads necessary files and modules in order for the command `python3` to be valid when used. Please refer to `/software/env-modules.html` for more detail on how the command `module` works.
+- `module load python3`: Loads necessary files and modules in order for the command `python3` to be valid when used. Please refer to [Environment modules]({{ site.baseurl }}{% link software/env-modules.md %}) for more detail on how the command `module` works.
 - `python3 my_script.py`: Just like any other `python3` command, this line runs the `my_script.py` file using Python. **Later, the output(s) and/or error(s) of this operation is written to the files we have specified in our directives.**
 
 ### Batch Job Submission
@@ -129,7 +129,7 @@ First, let's take a look at what the new directives and commands in this script 
 Note that most of the directives at the start of this script have previously been discussed at "Basic batch job example", so we are only going to discuss the new ones:
 
 - `--nodelist=cn01`: Using `--nodelist` you can specify the exact name(s) of the node(s) you want your job to run on. In this case, we have specified it to be `cn01`.
-- `--ntasks=1`: This directive tells SLURM to allocate resources for one task. A "task" in this context is essentially an instance of your application or script running on the cluster. For many applications, especially those that don't explicitly parallelize their workload across multiple CPUs or nodes, specifying a single task is sufficient. However, if you're running applications that can benefit from parallel execution, you might increase this number. This directive is crucial for optimizing resource usage based on the specific needs of your job. For instance, running multiple independent instances of a data analysis script on different subsets of your data could be a scenario where increasing the number of tasks is beneficial.
+- `--ntasks=1`: This directive tells Slurm to allocate resources for one task. A "task" in this context is essentially an instance of your application or script running on the cluster. For many applications, especially those that don't explicitly parallelize their workload across multiple CPUs or nodes, specifying a single task is sufficient. However, if you're running applications that can benefit from parallel execution, you might increase this number. This directive is crucial for optimizing resource usage based on the specific needs of your job. For instance, running multiple independent instances of a data analysis script on different subsets of your data could be a scenario where increasing the number of tasks is beneficial.
 - `--cpus-per-task=1`: This sets the number of CPUs allocated to each task specified by `--ntasks`. By default, setting it to 1 assigns one CPU to your task, which is fine for tasks that are not CPU-intensive or designed to run on a single thread. However, for applications that are multi-threaded and can utilize more than one CPU core for processing, you would increase this value to match the application's capability to parallelize its workload.
 - The variable initializations such as `node=...`, `user=...` are used to retrieve some information from the node you are running your job on to produce the right command for you to later run **locally**, and set up the SSH tunnel. You don't need to worry about these.
 - The `echo` command is going to write the ssh tunneling command to your `.out` file with the help of the variables. We will explain how to use that generated command further below.
@@ -201,7 +201,7 @@ model.fit(x_train, y_train, epochs=10)
 model.evaluate(x_test,  y_test, verbose=2)
 ```
 
-Next, create a SLURM batch job script named `job-test-nv-tf.sh`. This script requests GPU resources, loads necessary modules, and runs your TensorFlow script inside an Apptainer container:
+Next, create a Slurm batch job script named `job-test-nv-tf.sh`. This script requests GPU resources, loads necessary modules, and runs your TensorFlow script inside an Apptainer container:
 
 ```bash
 #!/bin/bash
@@ -322,7 +322,7 @@ Once submitted, you'll be placed in an interactive shell on the allocated node w
 
 ## Array jobs
 
-To submit an array job, you use the `--array` as a part of your `sbatch`. This option specifies a range of indices that SLURM uses to create multiple tasks from a single job submission. Each task in the array is assigned a unique SLURM_ARRAY_TASK_ID that can be used within your scripts to differentiate between them.
+To submit an array job, you use the `--array` as a part of your `sbatch`. This option specifies a range of indices that Slurm uses to create multiple tasks from a single job submission. Each task in the array is assigned a unique SLURM_ARRAY_TASK_ID that can be used within your scripts to differentiate between them.
 
 ### Array job example
 
@@ -368,7 +368,7 @@ except FileNotFoundError:
 
 This script basically takes an argument from the command line (Expected to be the `SLURM_ARRAY_TASK_ID`). Then constructs a filename from this ID, reads the corresponding input file, counts its lines, writes the count to an output file, and in case of any missing files it handles them by printing a message instead of crashing.
 
-Finally, to run this script as part of an array job on 3 files, adjust the `--array` option in your SLURM script (`process_array.sbatch`) to `1-3`.
+Finally, to run this script as part of an array job on 3 files, adjust the `--array` option in your Slurm script (`process_array.sbatch`) to `1-3`.
 
 ```bash
 #!/bin/bash
@@ -383,9 +383,9 @@ module load python3
 python3 process_data.py $SLURM_ARRAY_TASK_ID
 ```
 
-In the context of SLURM job submission scripts, %A and %a are special placeholders used within directives like --output and --error to dynamically generate filenames based on the job's array ID and the individual task ID within the array. Here's what each placeholder represents:
+In the context of Slurm job submission scripts, %A and %a are special placeholders used within directives like --output and --error to dynamically generate filenames based on the job's array ID and the individual task ID within the array. Here's what each placeholder represents:
 
-- `%A`: This placeholder is replaced by the SLURM job array's ID. The job array ID is a unique identifier assigned by SLURM to the entire array job at the time of submission. It helps you group and identify all tasks belonging to the same array job.
+- `%A`: This placeholder is replaced by the Slurm job array's ID. The job array ID is a unique identifier assigned by SLURM to the entire array job at the time of submission. It helps you group and identify all tasks belonging to the same array job.
 - `%a`: This placeholder is substituted with the specific task ID within the job array. Since an array job consists of multiple tasks, each with a unique task ID (determined by the `--array` option when the job is submitted), `%a` allows you to create distinct output or error files for each task, making it easier to troubleshoot and analyze the results of individual tasks.
 
 For example, if you submit an array job with the --array=1-10 option and use the following in your script:
@@ -395,19 +395,19 @@ For example, if you submit an array job with the --array=1-10 option and use the
 #SBATCH --error=job_error_%A_%a.err
 ```
 
-SLURM will create separate output and error files for each of the ten tasks in the array. If the array job's ID is 12345, the files for the first task will be named job_output_12345_1.out and job_error_12345_1.err, the files for the second task will be job_output_12345_2.out and job_error_12345_2.err, and so on.
+Slurm will create separate output and error files for each of the ten tasks in the array. If the array job's ID is 12345, the files for the first task will be named job_output_12345_1.out and job_error_12345_1.err, the files for the second task will be job_output_12345_2.out and job_error_12345_2.err, and so on.
 
 Now submit this job using `sbatch process_array.sbatch` and you must see 6 different output files (3 ending in `.out` and 3 in `.err`). The `.out` files each contain the content of the relevant text file they read from, and the `.err` files are expected to be empty if everything has run smoothly.
 
 ### Array Job Submission
 
-To submit an array job, use the `sbatch` command with your SLURM script that includes the `--array` option. For example:
+To submit an array job, use the `sbatch` command with your Slurm script that includes the `--array` option. For example:
 
 ```bash
 sbatch process_array.sbatch
 ```
 
-This will submit the entire array job. SLURM will then manage the execution of individual tasks within the array based on available resources.
+This will submit the entire array job. Slurm will then manage the execution of individual tasks within the array based on available resources.
 
 ## Parallel jobs
 
@@ -448,7 +448,7 @@ mpirun -n $NUM ./$OBJ
 
 This script compiles the MPI program using `mpicc` and runs it with `mpirun`, and specifies the number of processes with `-n`.
 
-Next, prepare a SLURM batch job script named `job-test-mpi.sbatch` to submit your MPI job. This script requests cluster resources and runs your MPI program through `mpi_hello_world.sh`:
+Next, prepare a Slurm batch job script named `job-test-mpi.sbatch` to submit your MPI job. This script requests cluster resources and runs your MPI program through `mpi_hello_world.sh`:
 
 ```bash
 #!/bin/bash
@@ -468,7 +468,7 @@ This script sets up a job with the name mpi_job_test, specifies output and error
 
 ### Parallel Job Submission
 
-Submit your parallel MPI job to SLURM using the `sbatch` command `sbatch job-test-mpi.sbatch`, specifying the desired number of parallel processes with `-n`. For example, to run with 8 parallel processes:
+Submit your parallel MPI job to Slurm using the `sbatch` command `sbatch job-test-mpi.sbatch`, specifying the desired number of parallel processes with `-n`. For example, to run with 8 parallel processes:
 
 ```bash
 sbatch -n 8 job-test-mpi.sh 8
