@@ -4,7 +4,7 @@ sort: 2
 
 # Submitting Jobs
 
-This page is mainly dedicated to examples of different job types. For a more comprehensive explanation on different job types, please refer to [Jobs Overview]({{site.baseurl}}{% link jobs/Overview.md %})
+This page is mainly dedicated to examples of different job types. For a more comprehensive explanation on different job types, please refer to [Jobs Overview]({{site.baseurl}}{% link jobs/Overview.md %}).
 
 ## Batch jobs (Non-interactive)
 
@@ -69,9 +69,9 @@ python3 /path/to/python_script/my_script.py
 
 Now let's walk through `my_script.sbatch` line by line to see what each directive does.
 
-- `#!/bin/bash`: This line needs to be included at the start of **all** your batch scripts. It basically specifies the script to be run with a shell called `bash`.
+- `#!/bin/bash`: This line needs to be included at the start of **all** your batch scripts. It basically specifies the script to be run with the `bash` shell.
 
-Lines 2-7 are your `SBTACH` directives. These lines are where you specify different options for your job including its name, output and error files path/name, list of nodes you want to use, resource limits, and more if required. Let's walk through them line by line:
+Lines 2-7 are your `SBATCH` directives. These lines are where you specify different options for your job including its name, output and error files path/name, list of nodes you want to use, resource limits, and more if required. Let's walk through them line by line:
 
 - `#SBATCH --job-name=test_job`: This directive gives your job a name that you can later use to easier track and manage your job when looking for it in the queue. In this example, we've called it `test_job`. You can read about job management at `/software/env-modules.html`.
 - `#SBATCH --output=test_job.out`: Used to specify where your output file is generated, and what it's going to be named. In this example, we have not provided a path, but only provided a name. When you use the `--output` directive without specifying a full path, just providing a filename, Slurm will store the output file in the current working directory from which the `sbatch` command was executed.
@@ -89,157 +89,7 @@ After the last `#SBATCH` directive, commands are ran like any other regular shel
 
 This script as discussed previously, is a non-interactive job. Non-interactive jobs are submitted to the queue with the use of the `sbatch` command. In this case, we submit our job using `sbatch my_script.sbatch`.
 
-### Jupyter Notebook batch job example
-
-As you know, there is no Graphical User Interface (GUI) available when you connect to the cluster through your shell, hence in order to have access to some application's GUI, port fortforwarding is necessary [(What is SSH port forwarding?)](https://www.youtube.com/watch?v=x1yQF1789cE&ab_channel=TonyTeachesTech). In this example, we will do port forwarding to access Jupyter Notebook's web portal. You will basically send and receive your data through a specified port on your local machine that is tunneled to the port on the cluster where the Jupyter Notebook server is running. This setup enables you to work with Jupyter Notebooks as if they were running locally on your machine, despite actually being executed on a remote cluster node. After a successful setup, you can access Jupyter's portal through your desired browser through a generated link by Jupyter **on your local machine**.
-
-First, create your sbatch script file. I'm going to call mine `jupyterTest.sbatch`. Then add the following to it:
-
-```bash
-#!/bin/bash
-
-#SBATCH --nodelist=cn01
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
-#SBATCH --time=00:30:00
-#SBATCH --job-name=jupyterTest1
-#SBATCH --output=/home/mani/outputs/jupyterTest1.out
-#SBATCH --error=/home/mani/outputs/jupyterTest1.err
-
-# get tunneling info
-XDG_RUNTIME_DIR=""
-node=$(hostname -s)
-user=$(whoami)
-port=9001
-
-# print tunneling instructions to jupyterTest1
-echo -e "
-Use the following command to set up ssh tunneling:
-ssh -p5010 -N -f -L ${port}:${node}:${port} ${user}@binary.star.hofstra.edu"
-
-module load jupyter
-
-jupyter notebook --no-browser --port=${port} --ip=${node}
-```
-
-Replace `/home/username/outputs/` with your actual directory path for storing output and error files.
-
-First, let's take a look at what the new directives and commands in this script do:
-
-Note that most of the directives at the start of this script have previously been discussed at "Basic batch job example", so we are only going to discuss the new ones:
-
-- `--nodelist=cn01`: Using `--nodelist` you can specify the exact name(s) of the node(s) you want your job to run on. In this case, we have specified it to be `cn01`.
-- `--ntasks=1`: This directive tells SLURM to allocate resources for one task. A "task" in this context is essentially an instance of your application or script running on the cluster. For many applications, especially those that don't explicitly parallelize their workload across multiple CPUs or nodes, specifying a single task is sufficient. However, if you're running applications that can benefit from parallel execution, you might increase this number. This directive is crucial for optimizing resource usage based on the specific needs of your job. For instance, running multiple independent instances of a data analysis script on different subsets of your data could be a scenario where increasing the number of tasks is beneficial.
-- `--cpus-per-task=1`: This sets the number of CPUs allocated to each task specified by `--ntasks`. By default, setting it to 1 assigns one CPU to your task, which is fine for tasks that are not CPU-intensive or designed to run on a single thread. However, for applications that are multi-threaded and can utilize more than one CPU core for processing, you would increase this value to match the application's capability to parallelize its workload.
-- The variable initializations such as `node=...`, `user=...` are used to retrieve some information from the node you are running your job on to produce the right command for you to later run **locally**, and set up the SSH tunnel. You don't need to worry about these.
-- The `echo` command is going to write the ssh tunneling command to your `.out` file with the help of the variables. We will explain how to use that generated command further below.
-- `module load jupyter`: Loads the required modules to add support for the command `jupyter`.
-- `jupyter notebook --no-browser --port=${port} --ip=${node}` runs a jupyter notebook and makes it listen on our specified port and address to later be accessible through your local machine's browser.
-
-Then, submit your Batch job using `sbatch jupyterTest.sbatch`. Make sure to replace `jupyterTest.sbatch` with whatever file name and extension you choose.
-
-At this stage, if you go and read the content of `jupyterTest.out`, there is a generated command that must look like the following:
-
-```bash
-ssh -p5010 -N -f -L 9001:cn01:9001 <your-username>@binary.star.hofstra.edu
-```
-
-Copy that line and run it in your local machine's command line. Then, enter your login credentials for `binary` and hit enter. You should not expect anything magical to happen. In fact, if everything is successful, your shell would go to a new line without generating any output.
-
-You can now access Jupyter's GUI through a browser of your choice on your local machine, at the address that jupyter notebook has generated for you. For some reason, Jupyter writes the address to `stderr`, so you must look for it inside your `jupyterTest.err` file. Inside that file, there must be a line containing a link similar to the following:
-
-```bash
-http://127.0.0.1:9001/?token=...(your token is here)...
-```
-
-Copy that address and paste it into your browser, and you must successfuly access Jupyter's GUI.
-
-### Apptainer TensorFlow batch job example
-
-This example shows how to execute a TensorFlow script, `tfTest.py`, that trains a simple neural network on the MNIST dataset using GPUs.
-
-First, create a Python script called `tfTest.py` with the provided content:
-
-```python
-import tensorflow as tf
-
-physical_devices = tf.config.list_physical_devices(device_type=None)
-
-print("Num of Devices:", len(physical_devices))
-
-print("Devices:\n", physical_devices)
-
-print("Tensorflow version information:\n",tf.__version__)
-
-print("begin test...")
-
-mnist = tf.keras.datasets.mnist
-mnist = tf.keras.datasets.mnist
-
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
-x_train, x_test = x_train / 255.0, x_test / 255.0
-
-model = tf.keras.models.Sequential([
-   tf.keras.layers.Flatten(input_shape=(28, 28)),
-   tf.keras.layers.Dense(128, activation='relu'),
-   tf.keras.layers.Dropout(0.2),
-   tf.keras.layers.Dense(10)
- ])
-
-predictions = model(x_train[:1]).numpy()
-
-loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
-
-loss_fn(y_train[:1], predictions).numpy()
-
-model.compile(optimizer='adam',
-                loss=loss_fn,
-                metrics=['accuracy'])
-
-model.fit(x_train, y_train, epochs=10)
-
-model.evaluate(x_test,  y_test, verbose=2)
-```
-
-Next, create a SLURM batch job script named `job-test-nv-tf.sh`. This script requests GPU resources, loads necessary modules, and runs your TensorFlow script inside an Apptainer container:
-
-```bash
-#!/bin/bash
-
-#SBATCH --job-name=tensorflow_test_job
-#SBATCH --output=result.txt
-#SBATCH --nodelist=gpu1
-#SBATCH --gres=gpu:A100:2
-#SBATCH --ntasks=1
-#SBATCH --time=10:00
-#SBATCH --mem-per-cpu=1000
-
-module load python3
-module load apptainer
-
-echo "run Apptainer TensorFlow GPU"
-apptainer run --nv tensorflowGPU.sif python3 tfTest.py
-```
-
-This script runs the `tfTest.py` script inside the TensorFlow GPU container (`tensorflowGPU.sif`)
-
-You can now submit your job to Slurm using `sbatch job-test-nv-tf.sbatch`.
-
-After the job completes, you can check the output in `result.txt`. The output should include information about the available physical devices (GPUs), the TensorFlow version, and the output from training the model on the MNIST dataset.
-
-The beginning and end of the file might look something like this:
-
-```text
-run Apptainer TensorFlow GPU
-Num of Devices: X
-Devices:
- [PhysicalDevice(name='/physical_device:CPU:0', device_type='CPU'), PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU'), ...]
-Tensorflow version information:
- X.XX.X
-begin test...
-...
-313/313 - 0s - loss: X.XXXX - accuracy: 0.XXXX
-```
+You can find more job examples where we run TensorFlow and PyTorch containers at the [Apptainer]({{site.baseurl}}{% link software/apptainer.md %}) page.
 
 ## Interactive jobs
 
