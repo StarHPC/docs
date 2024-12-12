@@ -25,9 +25,9 @@ way, that's almost always how we start to research issues too!
 
 Your subject line should be descriptive. "Problem on Star" is not a
 good subject line since it could be valid for basically every support
-Email we get. The support staff is a team. The subjects are the first
-thing that we see. We would like to be able to classify Email according
-to subjects before even opening the Email.
+E-mail we get. The support staff is a team. The subjects are the first
+thing that we see. We would like to be able to classify E-mails according
+to subjects before even opening the E-mail.
 
 ## Include the actual commands and error messages
 
@@ -45,7 +45,7 @@ down our research on your problem.
 
 Do not send support requests by replying to unrelated issues. Every
 issue gets a number and this is the number that you see in the subject
-line. Replying to unrelated issues means that your Email gets filed
+line. Replying to unrelated issues means that your E-mail gets filed
 under the wrong thread and risks being overlooked.
 
 ## The XY problem
@@ -79,7 +79,7 @@ nodes". The request then does not mention whether it worked on one node
 or on one core or whether it never worked and that this was the first
 attempt. Perhaps the problem has even nothing to do with one or two
 nodes. In order to better isolate the problem and avoid wasting time
-with many back and forth Emails, please tell us what actually worked so
+with many back and forth E-mails, please tell us what actually worked so
 far. Tell us what you have tried to isolate the problem. This requires
 some effort from you but this is what we expect from you.
 

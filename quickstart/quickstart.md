@@ -35,7 +35,7 @@ To get an account on Star, you need to complete out the [request form](https://a
     visitor/guest).
 -   Your mobile phone number. This is necessary for recovery of
     passwords.
--   Your institutional mail address (i.e. your work Email at the
+-   Your institutional mail address (i.e. your work email at the
     research institution to which you belong)
 -   The name and address of the instruction you belong to; also
     including name of the center, institute etc.
@@ -89,7 +89,7 @@ Storage quotas and usage limits are put in place to ensure fair use and equitabl
 
 It is important to know where to store different types of data (such as large datasets or temporary files).
 
-Your home directory (`/home/your_username`) provides a limited amount of storage for scripts, source code, and small datasets.
+Your home directory provides a limited amount of storage for scripts, source code, and small datasets.
 
 Project-specific directories may be created upon request for shared storage among multiple accounts.
 

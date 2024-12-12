@@ -150,8 +150,6 @@ You can find job script examples at [Submitting jobs]({{site.baseurl}}{% link jo
 
 ### When will my job start?
 
-How can I find out when my job will start?
-
 To find out approximately when the job scheduler thinks your job will
 start, use the command:
 

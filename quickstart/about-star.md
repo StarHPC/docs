@@ -14,6 +14,7 @@ Users run many different applications on the cluster based on their needs, such 
 
 Containerization is also increasingly popular in HPC it provides isolated environments that allow for the reuse of images for better reproducibility and software portability without the performance impact of other methods or the hastle of manualy installing dependencies. Containers are run using Apptainer (formerly Singularity), a containerization platform similar to Docker with the major difference that it runs under user privileges instead of `root`. Users can deploy images from NGC (NVIDIA GPU Cloud), which provides access to a wide array of pre-built images with GPU-optimized software for diverse applications. Leveraging container images can save a lot of time as users don’t need to set up the software applications from scratch and can just pull and use the NGC images with Apptainer.
 
+
 ## Hardware
 
 ### Login Node
