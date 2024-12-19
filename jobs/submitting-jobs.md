@@ -176,6 +176,14 @@ Once submitted, you'll be placed in an interactive shell on the allocated node w
 
 To submit an array job, you use the `--array` as a part of your `sbatch`. This option specifies a range of indices that Slurm uses to create multiple tasks from a single job submission. Each task in the array is assigned a unique SLURM_ARRAY_TASK_ID that can be used within your scripts to differentiate between them.
 
+### Multiple terminals in an interactive sessions
+
+It is very common to need more than one terminal for many applications (e.g. running the job in one terminal and monitoring it in another).
+
+A common solution is to use a terminal multiplexer, such as Tmux or GNU Screen.
+Our suggestion is Tmux and have provided a guide to getting started with it [on the Tmux page]({{site.baseurl}}{% link software/tmux.md %}
+
+
 ### Array job example
 
 Suppose you have a dataset split into multiple files and you want to process each file independently. Instead of submitting a separate job for each file, you can submit a single array job where each task processes a different file.
