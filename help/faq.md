@@ -4,11 +4,6 @@ sort: 1
 
 # Frequently asked questions
 
-## Privileges
-### How to get root access on the cluster?
-
-The root access to the cluster is not provided to users.
-
 ## Passwords
 
 ### I forgot my password - what now?
@@ -46,10 +41,10 @@ key:
 
 ## Installing software
 
-### I need Python package X but the one on Star is too old or I cannot find it
+### I need Python package X but the one on Star is too old or I cannot find it.
 
-You can choose different Python versions with either the module system
-or using Anaconda/Miniconda. See [Environment modules]({{site.baseurl}}{% link software/env-modules.md %}).
+You can choose different Python versions throguh the [module system]({{site.baseurl}}{% link software/env-modules.md %})
+or by using [Anaconda (Miniforge)]({{site.baseurl}}{% link software/conda.md %}).
 
 In cases where this still doesn't solve your problem or you would like
 to install a package yourself, please read the next section below about
@@ -58,17 +53,13 @@ installing without sudo rights.
 If we don't have it installed, and installing it yourself is not a good
 solution for you, please contact us and we will do our best to help you.
 
-### Can I install Python software as a normal user without sudo rights?
-
-Yes. Please see [Virtual environments]({{site.baseurl}}{% link software/virtual-env.md %}).
-
 ### How can I get sudo access?
 
 Due to the cluster's architecture and security model, `root` or `sudo` access is restricted and standard users cannot perform operations that require root access. However, most standard tasks do not actually require root privledges or have non-root alternatives anyway. Please learn about using [environment modules]({{site.baseurl}}{% link software/env-modules.md %}) and [virtual environments]({{site.baseurl}}{% link software/virtual-env.md %}). If there is any other task that appears to require `sudo` access, please submit a support request or contact the HPC support team to assist you with your needs. 
 
 ### How can I install packages without root access?
 
-Because normal users do not have sudo or root access, you may want to create a virtual environment or install into the home directory for your required software packages. Setting up a project like this will allow you to isolate project dependencies, prevent version conflicts, and ensure your environment is reproducible if sharing or collaboration is necessary. For more information, please see the [virtual environments guide]({{site.baseurl}}{% link software/virtual-env.md %}).
+To install packages, you can create a [virtual environments]({{site.baseurl}}{% link software/virtual-env.md %}) or install them into the home directory. Setting up a virtual environment allows you to isolate project dependencies, prevent version conflicts, and ensure your environment is reproducible if sharing or collaboration is necessary.
 
 #### Python Example
 Below are directions on using a simple virtual environment with venv. It is one of the many packages that allow you to manage virtual environments along with conda, virtualenv, and others.
@@ -160,7 +151,7 @@ This command gives you a report of account utilization, including CPU hours, for
 
     $ sreport cluster AccountUtilizationByUser start=YYYY-MM-DD end=YYYY-MM-DD
 
-## Connecting via ssh
+## Connecting through SSH
 
 ### How can I export the display from a compute node to my desktop?
 
@@ -206,6 +197,8 @@ you can take a look at this page explaining
 [keepalives](https://the.earth.li/~sgtatham/putty/0.60/htmldoc/Chapter4.html#config-keepalive)
 for a similar solution.
 {% endcomment %}
+
+## Working with jobs
 
 ### Where can I find an example of job script?
 
