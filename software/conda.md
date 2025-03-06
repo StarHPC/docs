@@ -24,6 +24,10 @@ On Star cluster, Miniforge is available through the module system. To load it:
 ```bash
 module load miniforge3
 ```
+To specify the python version, load the module:
+```bash
+module load python39
+```
 
 This gives you access to the `conda` command and Python. You can try:
 ```bash
@@ -39,7 +43,7 @@ This keeps your projects isolated and prevents conflicts between different packa
 To create a new environment:
 
 ```bash
-conda create -n myenv python=3.10
+conda create -n myenv
 ```
 
 Replace `myenv` with your preferred environment name and adjust the Python version as needed.
