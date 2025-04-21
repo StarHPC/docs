@@ -4,13 +4,13 @@
 
 Star HPC Cluster offers a number of file systems for different storage needs:
 
-- **Home Directories**: Located on the head node, accessible from all nodes via NFS. These directories are not designed for high-performance needs and have a limited capacity.
+- **Home Directories**: Located on the shared storage system, accessible from all nodes. These directories are not designed for high-performance needs.
 - **Work/Scratch (Local Storage)**: Directly attached storage specific to each compute node with high-performance local storage.
 - **Data (HPE PFSS)**: A high-capacity, high-performance shared storage system.
 
 ## Home Directories
 
-The home directories on Star serves as personal storage spaces for users. They are globally accessible from both the login nodes and all compute nodes. The size of these directories will be limited to a few gigabytes per user (exact quota to be determined). Users are advised to use these directories for storing essential files and scripts, and not for large datasets or computationally intensive tasks.
+The home directories on Star serves as personal storage spaces for users. They are globally accessible from both the login nodes and all compute nodes. The size of these directories will be limited to 50GB per user by default. Users are advised to use these directories for storing essential files and scripts, and not for large datasets or computationally intensive tasks.
 
 ## Work/Scratch Areas
 
@@ -27,7 +27,7 @@ Users are encouraged to manage their data efficiently, using the home directorie
 
 The Star HPC Cluster's backup policies vary across different storage systems:
 
-- **Home Directories**: Backed up daily with a retention period of approximately two weeks, subject to capacity.
+- **Home Directories**: No backup services provided.
 - **Work/Scratch**: No backup services provided.
 - **Data (HPE PFSS)**: Backup may be available on a per-project basis as determined by specific project requirements.
 
