@@ -5,7 +5,7 @@ Welcome to the documentation for the Star HPC cluster. This repository provides 
 
 ## New users
 
-Please see the [Quick Start Guide]({{site.baseurl}}{% link quickstart/quickstart.md %}) for information on getting access to and submitting jobs to the Star cluster.
+Please see the [Access and Policies]({{site.baseurl}}{% link quickstart/access-policies.md %}) for information on getting access to the Star cluster.
 
 ## Getting help
 
