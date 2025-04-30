@@ -17,6 +17,8 @@ exclude:
   - Makefile
   - Gemfile
   - Gemfile.lock
+  - quickstart/quick_long_start.md
+  - quickstart/access-policies.md
 
 plugins:
   - jemoji
