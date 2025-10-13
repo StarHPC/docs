@@ -211,17 +211,63 @@ JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
 1234_3     batch array_job    jdoe PD       0:00      1 (Resources)
 ```
 
+## Live monitoring of GPUs usage (clock/mem) via [nvtop](https://github.com/Syllo/nvtop)
+
+While running a job launched with `sbatch`, it can be useful to monitor the GPU load on the assigned computing node. One quick way to do this is by accessing the computing node and running a command within it.  
+
+Since our computing nodes have no internet access and direct SSH login from the login node is not allowed for security reasons, the following script provides a workaround. It allows you to attach an interactive session to a running job, identified by `<job_id>`, and check GPU usage from within the node.
+
+```bash
+#!/bin/bash
+if [ -z "$1" ]; then
+    echo "Usage: $0 <jobid>"
+    exit 1
+fi
+
+JOBID=$1
+
+srun --jobid=${JOBID} --pty bash -c '
+    # Try to load the nvtop module
+    if ! module add nvtop/3.0.1-gcc-8.5.0-tqonkuf 2>/dev/null; then
+        echo "Error: Failed to load module nvtop/3.0.1-gcc-8.5.0-tqonkuf"
+        exit 1
+    fi
+
+    # Check that nvtop is available
+    if ! command -v nvtop >/dev/null 2>&1; then
+        echo "Error: nvtop not found in PATH after loading module"
+        exit 1
+    fi
+
+    # Run nvtop
+    exec nvtop
+'
+```
+
+---
+
+This can be executed (after running `chmod +x <script_name>`) with
+
+1. `./gtop <id_job>` where `<id_job>` is retrieved using `squeue`, or
+2. with `./gtop $(squeue --name="job_name" --noheader --format="%i" | head -n 1)` in case one wants to retrieve the job id via the name.
+
+Note that a limitation of the second method is that Slurm does not guarantee that job names are unique, so multiple jobs may share the same name.
+
 ## Troubleshooting
 
 If a job fails, try checking the following:
 
 1. Look at the job's output and error files.
 2. Check the job state and exit code:
+
    ```
+
 sacct --brief
+
 ```
    Sample output:
    ```
+
 JobID             State ExitCode
 ------------ ---------- --------
 1040            TIMEOUT      0:0
@@ -230,6 +276,7 @@ JobID             State ExitCode
 1043             FAILED      1:0
 1046          COMPLETED      0:0
 1047            RUNNING      0:0
+
 ```
    `FAILED` indicates the process terminated with with a non-zero exit code.
    The first number in the ExitCode column is the exit code and the number after the colon is the signal that caused the process to terminate if it was terminated by a signal.

@@ -148,7 +148,7 @@ Afterwards, press `Ctrl + C` on your local computer's terminal session, where yo
 
 Do you need to access the node running Jupyter Notebook? You can use `srun` to launch an interactive shell. Check out [interactive jobs]({{site.baseurl}}{% link jobs/submitting-jobs.md %}#interactive-jobs) for more information.
 
-## Run a Jupyter Notebook directly on a computing node from Visual Studio Code ()
+## Run a Jupyter Notebook directly on a computing node from Visual Studio Code
 
 This is a list of steps required to run a Jupyter Notebook directly on a computing node from Visual Studio Code.
 <!-- This section was made possible thanks to the generous help of Mikhail Khlystun. -->
