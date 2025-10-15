@@ -1,101 +1,145 @@
 ---
-sort: 2
+sort: 3
 ---
 
-# Quick Start Guide
+# Quickstart
 
-## Account Access
+## How to SSH to the cluster
 
-A Star HPC account is required to access and submit jobs to the Star HPC cluster.
+To access the cluster, connect to the login node as follows:
 
-The application process may require justification of the need for HPC resources, detailing the kind of work you intend to do, the resources you expect to use, and sometimes, the anticipated outcomes of your research.
+```bash
+ssh -J USERNAME@adams204XX@hofstra.edu:5010 -p 5010 USERNAME@binary.star.hofstra.edu
+```
 
-Access to the cluster comes with responsibilities and certain privileges. Your account comes the responsibility to use the resources wisely and efficiently, to respect the shared nature of the environment, and to contribute to the overall HPC community.
+where `USERNAME` is replaced with your username or h700 ID, and `XX` is replaced with a number from 1 to 30 (inclusive).
 
-Users should understand the policies on data privacy and user responsibilities.
+If you recieve the error "The user has no tokens assigned", 
+that indicates an incorrect password was entered.
 
-## Getting started on the cluster (account, quota, password)
+Alternatively, you can connect to the login node directly if you are on a wired Hofstra computers, 
+connected to HUVPN, or connected to Eduroam with employee credentials:
 
-Before you start using the Star cluster, please read Hofstra University's [Acceptable Use Guidelines](http://www.hofstra.edu/scs/aug).
+```bash
+ssh -p 5010 USERNAME@binary.star.hofstra.edu
+```
 
-A general introduction to the Star HPC cluster, research community, and support group be found at [starhpc.hofstra.io](https://starhpc.hofstra.io).
+where `USERNAME` is replaced with your username or H700 ID.
 
-To be able to work on the Star cluster, you must have an approved account on the cluster.
+### What is my password?
 
-## How to get an account on Star
+Your Linux password is used to login to the cluster. If a temporary password was provided, you will need to set a new password the first time you login. Please note it will ask you to first enter your current (temporary) password again 
+before promtping you to enter a new password twice.
 
-Members of Hofstra University, Nassau Community College, or Adelphi University, and other researchers affiliated with these institutions in some way may apply for an account.
+The new password:
+- Must be at least 8 characters long
+- Must include at least 3 different character types (uppercase, lowercase, numbers, special characters)
+- Cannot contain your name or common dictionary words
 
-### Requesting an account
+**Note**: No characters will appear when typing your password.
 
-To get an account on Star, you need to complete out the [request form](https://access.starhpc.hofstra.io/apply). There, you will need to provide us the following information:
+You will see the following when it is successful:
+```
+passwd: all authentication tokens updated successfully.
+Connection to binary.star.hofstra.edu closed.
+```
 
--   Your full name, date of birth, and nationality.
--   Your position (master student, PhD, PostDoc, staff member,
-    visitor/guest).
--   Your mobile phone number. This is necessary for recovery of
-    passwords.
--   Your institutional mail address (i.e. your work Email at the
-    research institution to which you belong)
--   The name and address of the instruction you belong to; also
-    including name of the center, institute etc.
--   Institution username or a preferred username. If you are a member of
-    Hofstra and already have a Hofstra account, you must enter your Hofstra
-	username. A username is defined as a sequence of two to thirty lowercase
-	alphanumeric characters, where the first letter may only be a lowercase
-	character.
--   Necessary additional group and account memberships.
--   Optional: If you know in advance, please let us know: how many CPU
-    hours you expect to use, how much long-term storage space (GB) you
-    will need, and what software you will use. Partial answers are also
-    welcome. The more we know about the needs of our users, the better
-    services we can provide and the better we can plan for the future.
+After seeing this message, retry the first step to SSH and use your password to log in.
 
-**If you are a staff member and need to get a local project,** we need information about the project:  
--   Name of the project
--   Brief description of the project
--   Field of science for the project
--   Name of additonal members of the project
+## How to load a module
 
-**If you are a student, PhD or post-doc,** you need to also provide us
-with the name of your advisor and name of the project you are to be a
-member of.
+A module is simply a collection of pre-installed software and its dependencies 
+that you can access on the cluster.
 
-Submit the above information through the online registration form.
+You can load a module using the `module` command, for instance:
+```bash
+module load python3
+```
 
-## Login node
+This command loads necessary files and modules in order for the command `python3`
+to be valid when used. Please refer to [Environment modules]({{ site.baseurl }}{% link software/env-modules.md %}) for more detail on how the command `module` works.
 
-### About the login node
+## "Hello, World!" for Slurm
 
-The login node serves as the gateway or entry point to the cluster. Note that most software tools are not available on the login node and it is not for prototyping, building software, or running computationally intensive tasks itself. Instead, the login node is specifically for accessing the cluster and performing only very basic tasks, such as copying and moving files, submitting jobs, and checking the status of existing jobs. For development tasks, you would use one of the development nodes, which are accessed the same way as the large compute nodes. The compute nodes are where all the actual computational work is performed. They are accessed by launching jobs through Slurm with `sbatch` or `srun`.
+**Slurm** is the workload manager on the cluster that handles whose job(s) runs when, with what hardware resources,
+for how long, etc.
 
-### Connection and credentials
+In order for Slurm to know your job's requirements (i.e. resource requirements),
+you would need to write a job submission script. This script tells Slurm everything it needs to know about your job,
+from how many CPUs you need to how much memory you require. It's a simple text file that contains
+both Slurm directives (starting with `#SBATCH`) and the commands you want to run.
 
-Access to the cluster is provided through SSH to the login node. Upon your account's creation, you can access the login node using the address provided in your welcome Email.
+```bash
+#!/bin/bash
+#SBATCH --job-name=hello_world
+#SBATCH --output=hello_world.out
+#SBATCH --error=hello_world.err
+#SBATCH --nodes=1
+#SBATCH --time=10:00
+#SBATCH --mem=1G
 
-If you have existing Linux lab credentials, use them to log in. Otherwise, login credentials will be provided to you.
+echo "Hello, World!"
+```
 
-Additionally, the login node provides access to your Linux lab files, **But note that** the login node is **not** just another Linux lab machine. It simply provides mutual features (e.g., credentials) for convenience.
+The directives in this script tell Slurm:
+- `--job-name`: Names your job "hello_world" when shown in the queue
+- `--output`: Writes standard output to a file "hello_world.out"
+- `--error`: Writes error messages (stderr) to "hello_world.err"
+- `--nodes`: Requests 1 compute node (since not granularly specified, it'll be chosen by Slurm)
+- `--time`: Sets a time limit of 10 minutes (format is `minutes:seconds`)
+- `--mem`: Allocates 1 GigaByte of main memory
 
-## Scheduler policies
+To submit this job:
 
-Users should understand the cluster's policies regarding CPU and GPU usage, including time limits and priority settings.
+1. Save the script to a file named `hello_world.sbatch`
+2. Submit it with the command:
+   ```bash
+   sbatch hello_world.sbatch
+   ```
+3. Slurm will respond with a job ID number, like:
+   ```
+   Submitted batch job 12345
+   ```
 
-Users are advised to learn how to check their usage statistics to manage the resource allocation efficiently.
+Once your job completes, you'll find the output files in the directory you submit the job.
 
-## Storage policies
+Read more about Slurm and examples covering various job types at [Jobs overview and submission]({{site.baseurl}}{% link jobs/Overview.md %}).
 
-Storage quotas and usage limits are put in place to ensure fair use and equitable distribution of the resources among all users.
+## How to check your job's status
 
-It is important to know where to store different types of data (such as large datasets or temporary files).
+You can find your job's status within the list provided by the `squeue` command's output:
 
-Your home directory (`/home/your_username`) provides a limited amount of storage for scripts, source code, and small datasets.
+```bash
+squeue
+```
 
-Project-specific directories may be created upon request for shared storage among multiple accounts.
+Or only see jobs related to your username using:
 
-## Further Reading
+```bash
+squeue -u $USER
+```
 
-To make proper use of the cluster, please familiarize yourself with the basics of using Slurm, fundamental HPC concepts, and the cluster's architecture.
+Furthermore, if you know your job's ID (it is reported by Slurm after your submission), 
+you can do:
+```
+squeue -j <your-job-id>
+```
 
-You may be familiar with the `.bashrc`, `.bash_profile`, or `.cshrc` files for environment customization. To support different environments needed for different software packages, [environment modules]({{site.baseurl}}{% link software/env-modules.md %}) are used. Modules allow you to load and unload various software environments tailored to your computational tasks.
+where `<your-job-id>` is replaced with your job's ID.
 
+## How to transfer a file to/from the cluster
+
+You can use the SSH File Transfer Protocol (SFTP) and Secure Copy Protocol (SCP) to transfer 
+files to and from the cluster to another machine of your choice.
+
+Please see the [Transfer files to/from Star]({{site.baseurl}}{% link storage/file_transfer.md %}) 
+page for a comprehensive guide for this operation.
+
+## Where from here?
+
+If you want to read more about Slurm and job submission, see [Jobs overview and submission]({{site.baseurl}}{% link jobs/Overview.md %}).
+
+If you want to read about using containerization software to run some applications, see [Apptainer]({{site.baseurl}}{% link software/apptainer.md %}).
+
+Also try looking around the sidebar. There are plenty of pages that cover a wide 
+variety of tutorials and resources to help you make the most of the cluster.
